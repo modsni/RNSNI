@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Renewtrak Template for Triage</title>
+<title>RNTK TRIAGE TEMPLATE</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -22,6 +22,7 @@
     h1 {
         text-align: center;
         color: #333;
+        margin-bottom: 20px;
     }
     .input-container {
         margin-bottom: 20px;
@@ -30,7 +31,7 @@
         display: block;
         margin-bottom: 5px;
     }
-    input {
+    input, select {
         width: calc(100% - 20px);
         padding: 8px;
         margin-bottom: 10px;
@@ -46,6 +47,10 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #0056b3;
     }
     .text-output {
         padding: 10px;
@@ -56,6 +61,7 @@
         width: calc(100% - 20px);
         margin-bottom: 20px;
         resize: vertical;
+        overflow-y: auto;
     }
     .bold {
         font-weight: bold;
@@ -64,51 +70,106 @@
 </head>
 <body>
 <div class="container">
-    <h1>Renewtrak Template for Triage</h1>
+    <h1>RNTK TRIAGE TEMPLATE</h1>
+    <div class="input-container">
+        <label for="assigneeName">Select assignee:</label>
+        <select id="assigneeName">
+            <option value="Nat">Nat</option>
+            <option value="Andrew">Andrew</option>
+            <option value="Simon">Simon</option>
+            <option value="Alex">Alex</option>
+            <option value="CS">CS</option>
+            <option value="Colin">Colin</option>
+            <option value="No auto assignee - Needs review">No auto assignee - Needs review</option>
+            <option value="Support Team">Support Team</option>
+        </select>
+        <button onclick="addAssignee()">Add Assignee</button>
+    </div>
     <div class="input-container">
         <label for="assignedTickets">Number of tickets assigned:</label>
-        <input type="number" id="assignedTickets" min="0">
+        <select id="assignedTickets">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <!-- Add more options as needed -->
+        </select>
     </div>
     <div class="input-container">
         <label for="triageTickets">Number of tickets needing triage:</label>
         <input type="number" id="triageTickets" min="0">
     </div>
+    <div class="input-container">
+        <label for="noTriage">No tickets needing triage:</label>
+        <select id="noTriage">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+        </select>
+    </div>
+    <div class="input-container">
+        <label for="noMoreTriage">No more tickets needing triage:</label>
+        <select id="noMoreTriage">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+        </select>
+    </div>
     <button onclick="generateCustomText()">Generate</button>
     <div class="text-output" id="textOutput" contenteditable="true"></div>
 </div>
 <script>
-    // Generate text based on custom inputs
+    // Function to add a new assignee option
+    function addAssignee() {
+        const newAssignee = prompt("Enter the name of the new assignee:");
+        if (newAssignee) {
+            const selectAssignee = document.getElementById("assigneeName");
+            const option = document.createElement("option");
+            option.text = newAssignee;
+            option.value = newAssignee;
+            selectAssignee.add(option);
+        }
+    }
+
+    // Generate text based on custom inputs and append to existing content
     function generateCustomText() {
+        const assigneeName = document.getElementById('assigneeName').value;
         const assignedTickets = document.getElementById('assignedTickets').value;
         const triageTickets = document.getElementById('triageTickets').value;
+        const noTriage = document.getElementById('noTriage').value === "true";
+        const noMoreTriage = document.getElementById('noMoreTriage').value === "true";
         const textOutput = document.getElementById('textOutput');
-        let text = "";
+
+        let text = '';
 
         if (assignedTickets > 0) {
             // For tickets assigned to assignees
-            text = `${assignedTickets} ticket${assignedTickets > 1 ? 's' : ''} assigned`;
-            if (assignedTickets === 1) {
-                text += ` to @Assignee`;
+            text += `${assignedTickets} ticket${assignedTickets > 1 ? 's' : ''} assigned`;
+            if (assignedTickets == 1) {
+                text += ` to @${assigneeName}`;
             } else {
-                text += ` to @Assignees`;
+                text += ` to @${assigneeName}s`;
             }
             text += `<br>`;
         } else {
-            text = `No tickets assigned<br>`;
+            text += `No tickets assigned<br>`;
         }
 
-        if (triageTickets > 0) {
+        if (triageTickets > 0 && !noTriage) {
             // For tickets needing triage
-            text += `<span class="bold">${triageTickets} tickets needing triage</span>`;
-        } else {
-            text += `<span class="bold">No tickets needing triage</span>`;
+            text += `<span class="bold">${triageTickets} tickets needing triage</span><br>`;
+        } else if (noTriage) {
+            text += `No tickets needing triage<br>`;
         }
 
-        textOutput.innerHTML = text;
-    }
+        if (noMoreTriage) {
+            // For "No more tickets needing triage"
+            text += `No more tickets needing triage<br>`;
+        }
 
-    // Automatically generate text when the page loads
-    window.onload = generateCustomText;
+        // Append new text to existing content
+        textOutput.innerHTML += text;
+    }
 </script>
 </body>
 </html>
