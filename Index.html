@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renewtrak Template for Triage</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+    }
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    .input-container {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    input {
+        width: calc(100% - 20px);
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .text-output {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        min-height: 200px;
+        width: calc(100% - 20px);
+        margin-bottom: 20px;
+        resize: vertical;
+    }
+    .bold {
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Renewtrak Template for Triage</h1>
+    <div class="input-container">
+        <label for="assignedTickets">Number of tickets assigned:</label>
+        <input type="number" id="assignedTickets" min="0">
+    </div>
+    <div class="input-container">
+        <label for="triageTickets">Number of tickets needing triage:</label>
+        <input type="number" id="triageTickets" min="0">
+    </div>
+    <button onclick="generateCustomText()">Generate</button>
+    <div class="text-output" id="textOutput" contenteditable="true"></div>
+</div>
+<script>
+    // Generate text based on custom inputs
+    function generateCustomText() {
+        const assignedTickets = document.getElementById('assignedTickets').value;
+        const triageTickets = document.getElementById('triageTickets').value;
+        const textOutput = document.getElementById('textOutput');
+        let text = "";
+
+        if (assignedTickets > 0) {
+            // For tickets assigned to assignees
+            text = `${assignedTickets} ticket${assignedTickets > 1 ? 's' : ''} assigned`;
+            if (assignedTickets === 1) {
+                text += ` to @Assignee`;
+            } else {
+                text += ` to @Assignees`;
+            }
+            text += `<br>`;
+        } else {
+            text = `No tickets assigned<br>`;
+        }
+
+        if (triageTickets > 0) {
+            // For tickets needing triage
+            text += `<span class="bold">${triageTickets} tickets needing triage</span>`;
+        } else {
+            text += `<span class="bold">No tickets needing triage</span>`;
+        }
+
+        textOutput.innerHTML = text;
+    }
+
+    // Automatically generate text when the page loads
+    window.onload = generateCustomText;
+</script>
+</body>
+</html>
